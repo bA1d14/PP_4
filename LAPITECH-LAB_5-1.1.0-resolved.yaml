@@ -1,0 +1,217 @@
+---
+openapi: 3.0.0
+info:
+  description: An Api that allows users post notes and change them
+  version: 1.1.0
+servers:
+- url: /
+paths:
+  /userinformation:
+    get:
+      description: Obtain information about user from database
+      parameters:
+      - name: userId
+        in: query
+        description: users Id
+        required: false
+        style: form
+        explode: true
+        schema:
+          maximum: 100000
+          minimum: 0
+          type: integer
+          example: 247
+      responses:
+        "200":
+          description: Successfull pull user information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /allnotes:
+    get:
+      description: Give all notes
+      parameters:
+      - name: userId
+        in: query
+        description: users Id
+        required: false
+        style: form
+        explode: true
+        schema:
+          maximum: 100000
+          minimum: 0
+          type: integer
+          example: 247
+      - name: bodyLimit
+        in: query
+        description: The amount of notes returned
+        required: false
+        style: form
+        explode: true
+        schema:
+          maximum: 20
+          minimum: 10
+          type: integer
+          example: 15
+      - name: pageLimit
+        in: query
+        description: The amount of pages returned
+        required: false
+        style: form
+        explode: true
+        schema:
+          maximum: 5
+          minimum: 1
+          type: integer
+          example: 2
+      responses:
+        "200":
+          description: Successfull pull list of notes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Note'
+    post:
+      description: Create a new note in database
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Note'
+        required: true
+      responses:
+        "201":
+          description: Successfully created note
+  /allnotes/{tag}:
+    get:
+      description: Give notes by special word
+      parameters:
+      - name: userId
+        in: query
+        description: users Id
+        required: false
+        style: form
+        explode: true
+        schema:
+          maximum: 100000
+          minimum: 0
+          type: integer
+          example: 247
+      - name: tag
+        in: path
+        description: tag
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: work
+      responses:
+        "200":
+          description: Successfull pull list of notes by tag
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/inline_response_200'
+  /allnotes/{noteId}:
+    get:
+      description: Chose note
+      parameters:
+      - name: noteId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          example: 1937
+      responses:
+        "200":
+          description: Successfull
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+    put:
+      description: Change a note in database
+      parameters:
+      - name: noteId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          example: 1937
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Note'
+        required: true
+      responses:
+        "200":
+          description: Successfully created note
+        "500":
+          description: Internal server eror
+    delete:
+      description: Delete object
+      parameters:
+      - name: noteId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          example: 1937
+      responses:
+        "204":
+          description: note was deleted
+        "404":
+          description: Note missing
+components:
+  schemas:
+    User:
+      properties:
+        id:
+          type: integer
+          example: 4
+        username:
+          type: string
+          example: John
+        number of notes:
+          type: integer
+          example: 7
+        notes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Note'
+      description: Model containing user information
+    Note:
+      properties:
+        text:
+          type: string
+          example: qwertyuiop
+        post id:
+          type: integer
+          example: 229
+        author:
+          type: integer
+          example: 2290
+        users:
+          type: array
+          items:
+            type: string
+      description: Model containing note
+    inline_response_200:
+      properties:
+        notes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Note'
